@@ -51,6 +51,14 @@ function Leads() {
   const [showModal, setShowModal] = useState(false)
   const [selectedLead, setSelectedLead] = useState(null)
   const [filter, setFilter] = useState('all')
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [newLead, setNewLead] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    source: 'Google Ads',
+    notes: ''
+  })
 
   const filteredLeads = leads.filter(lead => {
     if (filter === 'all') return true
@@ -89,6 +97,24 @@ function Leads() {
     setShowModal(true)
   }
 
+  const handleCreateLead = () => {
+    const nextId = (leads[leads.length - 1]?.id || 0) + 1
+    const created = {
+      id: nextId,
+      name: newLead.name || 'Unnamed',
+      email: newLead.email || '',
+      phone: newLead.phone || '',
+      source: newLead.source || 'Website',
+      status: 'New',
+      assignedTo: 'Unassigned',
+      date: new Date().toISOString().slice(0, 10),
+      notes: newLead.notes || ''
+    }
+    setLeads([created, ...leads])
+    setShowCreateModal(false)
+    setNewLead({ name: '', email: '', phone: '', source: 'Google Ads', notes: '' })
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -97,7 +123,10 @@ function Leads() {
           <h1 className="text-2xl font-bold text-gray-900">Leads Management</h1>
           <p className="text-gray-600">Manage and track customer inquiries</p>
         </div>
-        <button className="bg-primary text-white px-4 py-2 rounded-lg hover:opacity-90 transition-colors">
+        <button
+          className="bg-primary text-white px-4 py-2 rounded-lg hover:opacity-90 transition-colors"
+          onClick={() => setShowCreateModal(true)}
+        >
           Add New Lead
         </button>
       </div>
@@ -344,6 +373,94 @@ function Leads() {
                 </button>
                 <button className="px-4 py-2 bg-primary text-white rounded-md hover:opacity-90">
                   Convert to Booking
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Lead Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <div className="mt-1">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium text-gray-900">Add New Lead</h3>
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                  <input
+                    type="text"
+                    value={newLead.name}
+                    onChange={(e) => setNewLead({ ...newLead, name: e.target.value })}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Full name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    value={newLead.email}
+                    onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="email@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <input
+                    type="tel"
+                    value={newLead.phone}
+                    onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="+1-555-0123"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Source</label>
+                  <select
+                    value={newLead.source}
+                    onChange={(e) => setNewLead({ ...newLead, source: e.target.value })}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option>Google Ads</option>
+                    <option>Website</option>
+                    <option>WhatsApp</option>
+                    <option>Phone</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                  <textarea
+                    rows={3}
+                    value={newLead.notes}
+                    onChange={(e) => setNewLead({ ...newLead, notes: e.target.value })}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Add any notes"
+                  />
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateLead}
+                  className="px-4 py-2 bg-primary text-white rounded-md hover:opacity-90"
+                >
+                  Save Lead
                 </button>
               </div>
             </div>
