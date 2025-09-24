@@ -1,7 +1,29 @@
 import React, { useState } from 'react'
 
-function Leads() {
-  const [leads, setLeads] = useState([
+interface Lead {
+  id: number
+  name: string
+  email: string
+  phone: string
+  source: string
+  status: 'New' | 'Contacted' | 'Qualified' | 'Converted' | 'Lost'
+  assignedTo: string
+  date: string
+  notes: string
+}
+
+interface NewLead {
+  name: string
+  email: string
+  phone: string
+  source: string
+  notes: string
+}
+
+type FilterType = 'all' | 'new' | 'contacted' | 'qualified' | 'converted'
+
+const Leads: React.FC = () => {
+  const [leads, setLeads] = useState<Lead[]>([
     {
       id: 1,
       name: 'John Doe',
@@ -48,11 +70,11 @@ function Leads() {
     }
   ])
 
-  const [showModal, setShowModal] = useState(false)
-  const [selectedLead, setSelectedLead] = useState(null)
-  const [filter, setFilter] = useState('all')
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [newLead, setNewLead] = useState({
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
+  const [filter, setFilter] = useState<FilterType>('all')
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false)
+  const [newLead, setNewLead] = useState<NewLead>({
     name: '',
     email: '',
     phone: '',
@@ -65,7 +87,7 @@ function Leads() {
     return lead.status.toLowerCase() === filter.toLowerCase()
   })
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string): string => {
     switch (status) {
       case 'New': return 'bg-primary/10 text-primary'
       case 'Contacted': return 'bg-yellow-100 text-yellow-800'
@@ -76,7 +98,7 @@ function Leads() {
     }
   }
 
-  const getSourceColor = (source) => {
+  const getSourceColor = (source: string): string => {
     switch (source) {
       case 'Google Ads': return 'bg-primary/10 text-primary'
       case 'Website': return 'bg-primary/10 text-primary'
@@ -86,20 +108,20 @@ function Leads() {
     }
   }
 
-  const handleStatusUpdate = (leadId, newStatus) => {
+  const handleStatusUpdate = (leadId: number, newStatus: Lead['status']): void => {
     setLeads(leads.map(lead => 
       lead.id === leadId ? { ...lead, status: newStatus } : lead
     ))
   }
 
-  const openLeadDetails = (lead) => {
+  const openLeadDetails = (lead: Lead): void => {
     setSelectedLead(lead)
     setShowModal(true)
   }
 
-  const handleCreateLead = () => {
+  const handleCreateLead = (): void => {
     const nextId = (leads[leads.length - 1]?.id || 0) + 1
-    const created = {
+    const created: Lead = {
       id: nextId,
       name: newLead.name || 'Unnamed',
       email: newLead.email || '',
@@ -297,7 +319,7 @@ function Leads() {
                     </span>
                     <select
                       value={lead.status}
-                      onChange={(e) => handleStatusUpdate(lead.id, e.target.value)}
+                      onChange={(e) => handleStatusUpdate(lead.id, e.target.value as Lead['status'])}
                       className={`text-xs font-semibold rounded-full border-0 ${getStatusColor(lead.status)}`}
                     >
                       <option value="New">New</option>

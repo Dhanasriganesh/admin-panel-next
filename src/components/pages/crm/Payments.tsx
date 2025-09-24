@@ -1,7 +1,32 @@
 import React, { useState } from 'react'
 
-function Payments() {
-  const [payments, setPayments] = useState([
+interface VendorPayment {
+  vendor: string
+  amount: number
+  status: 'Paid' | 'Pending'
+  date: string
+}
+
+interface Payment {
+  id: number
+  bookingId: number
+  customer: string
+  package: string
+  amount: number
+  paidAmount: number
+  remainingAmount: number
+  paymentStatus: 'Paid' | 'Partial' | 'Pending' | 'Overdue'
+  paymentMethod: string
+  paymentDate: string | null
+  dueDate: string
+  transactionId: string | null
+  vendorPayments: VendorPayment[]
+}
+
+type FilterType = 'all' | 'paid' | 'partial' | 'pending'
+
+const Payments: React.FC = () => {
+  const [payments, setPayments] = useState<Payment[]>([
     {
       id: 1,
       bookingId: 101,
@@ -76,16 +101,16 @@ function Payments() {
     }
   ])
 
-  const [showModal, setShowModal] = useState(false)
-  const [selectedPayment, setSelectedPayment] = useState(null)
-  const [filter, setFilter] = useState('all')
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null)
+  const [filter, setFilter] = useState<FilterType>('all')
 
   const filteredPayments = payments.filter(payment => {
     if (filter === 'all') return true
     return payment.paymentStatus.toLowerCase() === filter.toLowerCase()
   })
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string): string => {
     switch (status) {
       case 'Paid': return 'bg-primary/10 text-primary'
       case 'Partial': return 'bg-yellow-100 text-yellow-800'
@@ -95,7 +120,7 @@ function Payments() {
     }
   }
 
-  const getVendorStatusColor = (status) => {
+  const getVendorStatusColor = (status: string): string => {
     switch (status) {
       case 'Paid': return 'bg-primary/10 text-primary'
       case 'Pending': return 'bg-yellow-100 text-yellow-800'
@@ -103,7 +128,7 @@ function Payments() {
     }
   }
 
-  const openPaymentDetails = (payment) => {
+  const openPaymentDetails = (payment: Payment): void => {
     setSelectedPayment(payment)
     setShowModal(true)
   }

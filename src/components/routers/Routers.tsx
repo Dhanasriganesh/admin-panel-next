@@ -9,7 +9,8 @@ import Packages from '../pages/cms/Packages'
 import Blogs from '../pages/cms/Blogs'
 import Settings from '../pages/Settings'
 import Employees from '../pages/Employees'
-function Routers() {
+
+const Routers: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<AdminDashboard />} />

@@ -1,7 +1,26 @@
 import React, { useState } from 'react'
 
-function Bookings() {
-  const [bookings, setBookings] = useState([
+interface Booking {
+  id: number
+  customer: string
+  email: string
+  phone: string
+  package: string
+  destination: string
+  duration: string
+  travelers: number
+  amount: number
+  status: 'Confirmed' | 'Pending' | 'Cancelled' | 'Completed'
+  bookingDate: string
+  travelDate: string
+  paymentStatus: 'Paid' | 'Partial' | 'Pending' | 'Refunded'
+  assignedAgent: string
+}
+
+type FilterType = 'all' | 'confirmed' | 'pending' | 'cancelled'
+
+const Bookings: React.FC = () => {
+  const [bookings, setBookings] = useState<Booking[]>([
     {
       id: 1,
       customer: 'Sarah Wilson',
@@ -68,16 +87,16 @@ function Bookings() {
     }
   ])
 
-  const [showModal, setShowModal] = useState(false)
-  const [selectedBooking, setSelectedBooking] = useState(null)
-  const [filter, setFilter] = useState('all')
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [filter, setFilter] = useState<FilterType>('all')
 
   const filteredBookings = bookings.filter(booking => {
     if (filter === 'all') return true
     return booking.status.toLowerCase() === filter.toLowerCase()
   })
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string): string => {
     switch (status) {
       case 'Confirmed': return 'bg-primary/10 text-primary'
       case 'Pending': return 'bg-yellow-100 text-yellow-800'
@@ -87,7 +106,7 @@ function Bookings() {
     }
   }
 
-  const getPaymentStatusColor = (status) => {
+  const getPaymentStatusColor = (status: string): string => {
     switch (status) {
       case 'Paid': return 'bg-primary/10 text-primary'
       case 'Partial': return 'bg-yellow-100 text-yellow-800'
@@ -97,13 +116,13 @@ function Bookings() {
     }
   }
 
-  const handleStatusUpdate = (bookingId, newStatus) => {
+  const handleStatusUpdate = (bookingId: number, newStatus: Booking['status']): void => {
     setBookings(bookings.map(booking => 
       booking.id === bookingId ? { ...booking, status: newStatus } : booking
     ))
   }
 
-  const openBookingDetails = (booking) => {
+  const openBookingDetails = (booking: Booking): void => {
     setSelectedBooking(booking)
     setShowModal(true)
   }
@@ -267,7 +286,7 @@ function Bookings() {
                     </span>
                     <select
                       value={booking.status}
-                      onChange={(e) => handleStatusUpdate(booking.id, e.target.value)}
+                      onChange={(e) => handleStatusUpdate(booking.id, e.target.value as Booking['status'])}
                       className={`text-xs font-semibold rounded-full border-0 ${getStatusColor(booking.status)}`}
                     >
                       <option value="Pending">Pending</option>

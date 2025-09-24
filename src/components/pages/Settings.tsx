@@ -1,8 +1,61 @@
 import React, { useState } from 'react'
 
-function Settings() {
-  const [activeTab, setActiveTab] = useState('general')
-  const [settings, setSettings] = useState({
+interface GeneralSettings {
+  companyName: string
+  companyEmail: string
+  companyPhone: string
+  companyAddress: string
+  timezone: string
+  currency: string
+}
+
+interface WebsiteSettings {
+  siteTitle: string
+  siteDescription: string
+  siteKeywords: string
+  logo: string
+  favicon: string
+}
+
+interface NotificationSettings {
+  emailNotifications: boolean
+  smsNotifications: boolean
+  newLeadAlert: boolean
+  bookingAlert: boolean
+  paymentAlert: boolean
+  weeklyReport: boolean
+}
+
+interface IntegrationSettings {
+  googleAnalytics: string
+  facebookPixel: string
+  whatsappBusiness: string
+  paymentGateway: string
+}
+
+interface SettingsData {
+  general: GeneralSettings
+  website: WebsiteSettings
+  notifications: NotificationSettings
+  integrations: IntegrationSettings
+}
+
+interface Tab {
+  id: string
+  name: string
+  icon: string
+}
+
+interface User {
+  name: string
+  email: string
+  role: string
+  status: 'Active' | 'Inactive'
+}
+
+const Settings: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>('general')
+  const [settings, setSettings] = useState<SettingsData>({
     general: {
       companyName: 'Travel Dreams Agency',
       companyEmail: 'info@traveldreams.com',
@@ -34,7 +87,11 @@ function Settings() {
     }
   })
 
-  const updateSetting = (section, key, value) => {
+  const updateSetting = <K extends keyof SettingsData>(
+    section: K,
+    key: keyof SettingsData[K],
+    value: SettingsData[K][keyof SettingsData[K]]
+  ): void => {
     setSettings(prev => ({
       ...prev,
       [section]: {
@@ -44,13 +101,20 @@ function Settings() {
     }))
   }
 
-  const tabs = [
+  const tabs: Tab[] = [
     { id: 'general', name: 'General', icon: '⚙️' },
     { id: 'website', name: 'Website', icon: '🌐' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
     { id: 'integrations', name: 'Integrations', icon: '🔗' },
     { id: 'users', name: 'Users', icon: '👥' },
     { id: 'backup', name: 'Backup', icon: '💾' }
+  ]
+
+  const users: User[] = [
+    { name: 'Sarah Wilson', email: 'sarah@traveldreams.com', role: 'Admin', status: 'Active' },
+    { name: 'Mike Johnson', email: 'mike@traveldreams.com', role: 'Agent', status: 'Active' },
+    { name: 'Lisa Davis', email: 'lisa@traveldreams.com', role: 'Agent', status: 'Active' },
+    { name: 'David Brown', email: 'david@traveldreams.com', role: 'Manager', status: 'Inactive' }
   ]
 
   return (
@@ -352,12 +416,7 @@ function Settings() {
               </div>
               <div className="p-6">
                 <div className="space-y-4">
-                  {[
-                    { name: 'Sarah Wilson', email: 'sarah@traveldreams.com', role: 'Admin', status: 'Active' },
-                    { name: 'Mike Johnson', email: 'mike@traveldreams.com', role: 'Agent', status: 'Active' },
-                    { name: 'Lisa Davis', email: 'lisa@traveldreams.com', role: 'Agent', status: 'Active' },
-                    { name: 'David Brown', email: 'david@traveldreams.com', role: 'Manager', status: 'Inactive' }
-                  ].map((user, index) => (
+                  {users.map((user, index) => (
                     <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-center">
                         <div className="h-10 w-10 bg-gray-300 rounded-full flex items-center justify-center">
